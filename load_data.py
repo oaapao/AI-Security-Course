@@ -23,6 +23,18 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle
 
 classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
+
+def make_gt_txt():
+    a = ''
+    for i, data in enumerate(testloader, 0):
+        # get the inputs; data is a list of [inputs, labels]
+        inputs, labels = data
+        a += ' '.join(f'{j}' for j in labels)
+        a += ' '
+    with open('./result/gt.txt', 'w') as fp:
+        fp.write(a)
+
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import numpy as np
