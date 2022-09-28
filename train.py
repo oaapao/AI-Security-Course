@@ -1,0 +1,73 @@
+# -*- coding: utf-8 -*-
+# @File  : train.py
+# @Author: oaapao
+# @Date  : 2022/9/28
+# @Desc  : train model
+# @Contact : zhiqiang.shen@zju.edu.cn
+import argparse
+import datetime
+import os
+
+import torch
+import torch.optim as optim
+from torch import nn
+from tqdm.auto import trange
+
+from load_data import trainloader
+from model import Net
+
+
+def train(epochs):
+    print('Start Training')
+    for epoch in trange(epochs, desc='Epoch'):  # loop over the dataset multiple times
+        running_loss = 0.0
+        for i, data in enumerate(trainloader, 0):
+            # get the inputs; data is a list of [inputs, labels]
+            inputs, labels = data
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            # zero the parameter gradients
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs = net(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            # print statistics
+            running_loss += loss.item()
+
+        print(f'Epoch {epoch + 1} total loss: {running_loss:.3f}')
+        torch.save(net.state_dict(), PATH.format(epoch))
+
+    print('Finished Training')
+    torch.save(net.state_dict(), PATH)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--epoch', help='train epoch', type=int, default=10)
+    parser.add_argument('--lr', help='learning rate', type=float, default=0.01)
+    parser.add_argument('--path', help='weight file dir', type=str, default='./weights/')
+    parser.add_argument('--device', help='cpu or gpu', type=str, default='cuda:3')
+    args = parser.parse_args()
+
+    device = torch.device(args.device)
+    net = Net()
+    net.to(device)
+    net.train()
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(net.parameters(), lr=args.lr)
+
+    cur_time = datetime.datetime.now()
+    date_str = cur_time.strftime('%m.%d-')
+    time_str = cur_time.strftime('%H:%M')
+    path = args.path + date_str + time_str
+    if not os.path.exists(path):
+        os.makedirs(path, exist_ok=True)
+
+    PATH = path + '/epoch{}.pth'
+    train(args.epoch)
