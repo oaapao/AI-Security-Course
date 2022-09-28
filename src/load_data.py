@@ -4,10 +4,13 @@
 # @Date  : 2022/9/28
 # @Desc  : load CIFAR10 data
 # @Contact : zhiqiang.shen@zju.edu.cn
+import os
 
 import torch
 import torchvision
 import torchvision.transforms as transforms
+
+from src import BASE_DIR
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -15,10 +18,12 @@ transform = transforms.Compose(
 
 batch_size = 24
 
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=False, transform=transform)
+trainset = torchvision.datasets.CIFAR10(root=os.path.join(BASE_DIR, "data"), train=True, download=False,
+                                        transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=8)
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=False, transform=transform)
+testset = torchvision.datasets.CIFAR10(root=os.path.join(BASE_DIR, "data"), train=False, download=False,
+                                       transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=8)
 
 classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
@@ -31,11 +36,12 @@ def make_gt_txt():
         inputs, labels = data
         a += ' '.join(f'{j}' for j in labels)
         a += ' '
-    with open('./result/gt.txt', 'w') as fp:
+    with open(os.path.join(BASE_DIR, "result", "gt.txt"), 'w') as fp:
         fp.write(a)
 
 
 if __name__ == '__main__':
+    # make_gt_txt()
     import matplotlib.pyplot as plt
     import numpy as np
 

@@ -5,12 +5,14 @@
 # @Desc  : run classify model to get output
 # @Contact : zhiqiang.shen@zju.edu.cn
 import argparse
+import os
 
 import torch
 from tqdm import tqdm
 
 from load_data import testloader
 from model import Net
+from src import BASE_DIR
 
 
 def run_test(model_path, device):
@@ -39,7 +41,7 @@ def run_test(model_path, device):
             result += ' '.join(f'{j}' for j in predicted)
             result += ' '
 
-    with open('./result/prediction.txt', 'w') as fp:
+    with open(os.path.join(BASE_DIR, "result", 'prediction.txt'), 'w') as fp:
         fp.write(result)
     print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
 
@@ -47,7 +49,7 @@ def run_test(model_path, device):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', help='which weight file to load', type=str,
-                        default='./weights/0928-2103/20.pth')
+                        default='0928-2319/5.pth')
     parser.add_argument('--device', help='cpu or gpu', type=str, default='cuda:3')
     args = parser.parse_args()
-    run_test(args.path, args.device)
+    run_test(os.path.join(BASE_DIR, "weights", args.path), args.device)

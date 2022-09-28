@@ -10,6 +10,8 @@ import os.path
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 
+from src import BASE_DIR
+
 classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
@@ -39,8 +41,8 @@ def evaluate(gt_path, pre_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--gt', help='gt label txt path', type=str, default='./result/gt.txt')
-    parser.add_argument('--pre', help='predict label txt path', type=str, default='./result/prediction.txt')
+    parser.add_argument('--gt', help='gt label txt path', type=str, default='gt.txt')
+    parser.add_argument('--pre', help='predict label txt path', type=str, default='prediction.txt')
     args = parser.parse_args()
 
-    evaluate(args.gt, args.pre)
+    evaluate(os.path.join(BASE_DIR, "result", args.gt), os.path.join(BASE_DIR, "result", args.pre))
