@@ -15,13 +15,13 @@ from torch import nn
 from tqdm.auto import trange
 
 from load_data import trainloader, testloader
-from model import Net
+from model import get_model
 from src import BASE_DIR
 from src.utils import update_json
 
 
 def train(epochs):
-    print('Start Training')
+    print(f'[{datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")}]Start Training')
     try:
         for epoch in trange(epochs, desc='Epoch'):  # loop over the dataset multiple times
             net.train()
@@ -61,7 +61,7 @@ def train(epochs):
     except Exception as e:
         update_json(task_info_path, "traceback", e.__str__())
 
-    print('Finished Training')
+    print(f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]Finished Training")
     update_json(task_info_path, "end_train_time", datetime.datetime.now().strftime('%m.%d %H:%M'))
 
 
@@ -71,17 +71,21 @@ if __name__ == '__main__':
     parser.add_argument('--epoch', help='train epoch', type=int, default=5)
     parser.add_argument('--lr', help='learning rate', type=float, default=0.0003)
     parser.add_argument('--device', help='cpu or gpu', type=str, default='cuda:3')
+    parser.add_argument('--no_dropout', action='store_true', default=False)
+    parser.add_argument('--no_bn', action='store_true', default=False)
+
     args = parser.parse_args()
 
     device = torch.device(args.device)
-    net = Net()
+    net = get_model(dropout=(not args.no_dropout), bn=(not args.no_bn))
     net.to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
     task_path = os.path.join(BASE_DIR, "tasks", f'task-{args.task_id}')
-    print(f"Saving task result to: {task_path}")
+    print(
+        f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]Saving task result to: {task_path}")
 
     weights_path = os.path.join(task_path, "weights")
 
@@ -92,7 +96,9 @@ if __name__ == '__main__':
     with open(task_info_path, "w") as fp:
         json.dump({"start_train_time": datetime.datetime.now().strftime('%m.%d %H:%M'),
                    "epoch": args.epoch,
-                   "learning_rate": args.lr}, fp)
+                   "learning_rate": args.lr,
+                   "BN": 0 if args.no_bn else 1,
+                   "Dropout": 0 if args.no_dropout else 1}, fp)
 
     PATH = os.path.join(weights_path, '{}.pth')
     train(args.epoch)

@@ -5,10 +5,10 @@
 # @Desc  :
 # @Contact : zhiqiang.shen@zju.edu.cn
 import argparse
+import datetime
 import os.path
 
-import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report
 
 from src import BASE_DIR
 
@@ -16,8 +16,8 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship'
 
 
 def evaluate(gt_path, pre_path):
-    print(f"gt path: {gt_path}")
-    print(f"pre path: {pre_path}")
+    print(f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]gt path: {gt_path}")
+    print(f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]pre path: {pre_path}")
     assert os.path.exists(gt_path) and os.path.exists(pre_path)
     with open(gt_path, 'r') as f:
         gt_str = f.read()
@@ -41,7 +41,9 @@ def evaluate(gt_path, pre_path):
     # plt.xlabel('Predicted label')
     # plt.draw()
     # plt.savefig(os.path.join(task_path, "confusion_matrix.png"))
-    print("Evaluate finished")
+    print(f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]Evaluate finished")
+    print(
+        f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]Saving evaluation result to: {os.path.join(task_path, 'evaluation.txt')}")
 
 
 if __name__ == '__main__':

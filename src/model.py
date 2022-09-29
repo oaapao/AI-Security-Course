@@ -4,6 +4,8 @@
 # @Date  : 2022/9/28
 # @Desc  : define classify model on CIFAR10
 # @Contact : zhiqiang.shen@zju.edu.cn
+import datetime
+
 import math
 import torch
 import torch.nn as nn
@@ -29,7 +31,12 @@ class SeModule(nn.Module):
 
 class Net(nn.Module):
 
-    def __init__(self):
+    def __init__(self, dropout=True, batch_norm=True):
+        """
+        Classification Network
+        :param dropout: whether to use dropout to train the model
+        :param batch_norm: whether to use batch norm to train the model
+        """
         super().__init__()
         self.conv0 = nn.Conv2d(3, 8, 3, padding=1)
         self.bn0 = nn.BatchNorm2d(8)
@@ -48,6 +55,8 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(64 * 5 * 5, 128)
         self.fc2 = nn.Linear(128, 10)
 
+        self.use_dropout = dropout
+        self.use_bn = batch_norm
         self.dropout = nn.Dropout(p=0.5)
 
         for m in self.modules():
@@ -59,18 +68,43 @@ class Net(nn.Module):
                 m.bias.data.zero_()
 
     def forward(self, x):
-        x = F.relu(self.bn0(self.conv0(x)))
-
-        x = F.relu(self.bn1_0(self.dw1(x)))
-        x = self.se1(F.relu(self.bn1_1(self.down1(x))))
-
-        x = F.relu(self.bn2_0(self.dw2(x)))
-        x = self.se2(F.relu(self.bn2_1(self.down2(x))))
+        if self.use_bn:
+            x = F.relu(self.bn0(self.conv0(x)))
+            x = F.relu(self.bn1_0(self.dw1(x)))
+            x = self.se1(F.relu(self.bn1_1(self.down1(x))))
+            x = F.relu(self.bn2_0(self.dw2(x)))
+            x = self.se2(F.relu(self.bn2_1(self.down2(x))))
+        else:
+            x = F.relu(self.conv0(x))
+            x = F.relu(self.dw1(x))
+            x = self.se1(F.relu(self.down1(x)))
+            x = F.relu(self.dw2(x))
+            x = self.se2(F.relu(self.down2(x)))
 
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
-        x = F.relu(self.dropout(self.fc1(x)))
-        x = F.relu(self.dropout(self.fc2(x)))
+        if self.use_dropout:
+            x = F.relu(self.dropout(self.fc1(x)))
+            x = F.relu(self.dropout(self.fc2(x)))
+        else:
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
         return x
+
+
+def get_model(dropout=True, bn=True) -> Net:
+    """
+    get a classification network
+    :param dropout: use dropout
+    :param bn:use batch norm
+    :return: Net
+    """
+    if dropout or bn:
+        print(
+            f'[{datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")}]Getting model: using {"dropout" if dropout else ""} {"BN" if bn else ""}')
+    else:
+        print(
+            f'[{datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")}]Getting model without Dropout or BN')
+    return Net(dropout=dropout, batch_norm=bn)
 
 
 if __name__ == '__main__':
