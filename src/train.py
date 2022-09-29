@@ -49,9 +49,9 @@ def train(epochs):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--task_id', help='train task ID', type=int, default=1)
     parser.add_argument('--epoch', help='train epoch', type=int, default=5)
     parser.add_argument('--lr', help='learning rate', type=float, default=0.0003)
-    parser.add_argument('--path', help='weight file dir', type=str, default='weights')
     parser.add_argument('--device', help='cpu or gpu', type=str, default='cuda:3')
     args = parser.parse_args()
 
@@ -66,9 +66,13 @@ if __name__ == '__main__':
     cur_time = datetime.datetime.now()
     date_str = cur_time.strftime('%m%d-')
     time_str = cur_time.strftime('%H%M')
-    path = os.path.join(BASE_DIR, args.path, date_str + time_str)
-    if not os.path.exists(path):
-        os.makedirs(path, exist_ok=True)
+    path = os.path.join(BASE_DIR, "result", f'task-{args.task_id}', "weights")
+
+    if os.path.exists(path):
+        raise RuntimeError(f"Task ID {args.task_id} already exists.")
+    os.makedirs(path)
+
+    # TODO: write task info
 
     PATH = os.path.join(path, '{}.pth')
     train(args.epoch)
