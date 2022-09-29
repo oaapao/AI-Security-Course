@@ -2,9 +2,9 @@
 
 This Repo is mainly for the design and implementation of experiments in AI+Security course in ZJUSE.
 
-<img src="img/myplot.png" alt="failed to load img">
+<img src="img/sample.png" alt="failed to load img">
 
-The confusion matrix of CIFAR10 below.
+Samples of CIFAR10
 
 ## Getting Started
 
@@ -39,15 +39,7 @@ responsive predict labels via the following shell:
 
 ```shell
 # feel free to change
-export PYTHONPATH=$(pwd):$(pwd)/src:$PYTHONPATH
 python src/test.py --task_id 1 --epoch 20 --device cuda:3
-```
-
-Make sure you have sufficient right on .sh before run it:
-
-```shell
-chmod 777 run_test.sh
-./run_test.sh
 ```
 
 After that you will get a .txt which contains all test result(10,000 digit):
@@ -60,18 +52,42 @@ After that you will get a .txt which contains all test result(10,000 digit):
 
 ### Evaluate result
 
-Alter run_evaluate.sh as you wish:
+Run evaluate.py to evaluate test results:
 
 ```shell
-# in run_evaluate.sh
 python src/evaluate.py --task_id 1 --gt gt.txt
 ```
 
-Then run the following cmd to obtain evaluation results:
+To find a better hyperparameter, we can run run_tests.sh to generate test result using different hyperparameter:
 
 ```shell
-./run_evaluate.sh
+./run_tests.sh
 ```
+
+After that you can use src/analysis.py to obtain some useful figures.
+
+1. To show the test result intuitively, we draw a Confusion Matrix:
+
+   <img src="img/confusion_matrix.png" alt="failed to load image">
+
+2. As the epoch of train increase, the loss on training set and Acc on test set as follows:
+
+   <img src="img/epoch.png" alt="failed to load image">
+
+3. Changing learning rate in training process, the final test result(Acc) on test set as follows:
+
+   <img src="img/lr.png" alt="failed to load image">
+
+   Of course, they are trained during same epochs. From the figure we suggest that the learning rate should be less than
+   0.008.
+
+4. Finally, we change the method of model regularization: use both Batch Normalization and Dropout, only use Batch
+   Normalization, only use Dropout, and use nothing.
+   Here is the result:
+   <img src="img/regular.png" alt="failed to load image">
+
+   We can see that Dropout is more important for improving model performance than Batch Normalization in our project
+   since there is almost no difference on Acc between whether to use Batch Normalization.
 
 ## Build your own model
 
@@ -82,7 +98,7 @@ Modify src/model.py
 ### Train your model
 
 ```shell
-./run_train.sh
+python src/train.py --task_id 1 --epoch 30 --lr 0.0003 --device cuda:0 >>src/tasks/task-1/output.log
 ```
 
 ## License
