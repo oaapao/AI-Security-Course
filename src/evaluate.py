@@ -29,18 +29,6 @@ def evaluate(gt_path, pre_path):
     with open(os.path.join(task_path, "evaluation.txt"), 'w') as fp:
         fp.write(classification_report(y_true, y_pred))
 
-    # C = confusion_matrix(y_true, y_pred, labels=list(classes))
-    # plt.matshow(C)
-    # plt.colorbar()
-    #
-    # for i in range(len(C)):
-    #     for j in range(len(C)):
-    #         plt.annotate(C[j, i], xy=(i, j), horizontalalignment='center', verticalalignment='center')
-    #
-    # plt.ylabel('True label')
-    # plt.xlabel('Predicted label')
-    # plt.draw()
-    # plt.savefig(os.path.join(task_path, "confusion_matrix.png"))
     print(f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]Evaluate finished")
     print(
         f"[{datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')}]Saving evaluation result to: {os.path.join(task_path, 'evaluation.txt')}")
