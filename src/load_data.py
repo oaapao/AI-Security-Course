@@ -36,7 +36,7 @@ def make_gt_txt():
         inputs, labels = data
         a += ' '.join(f'{j}' for j in labels)
         a += ' '
-    with open(os.path.join(BASE_DIR, "result", "gt.txt"), 'w') as fp:
+    with open(os.path.join(BASE_DIR, "src", "gt.txt"), 'w') as fp:
         fp.write(a)
 
 

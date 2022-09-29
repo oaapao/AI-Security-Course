@@ -53,9 +53,9 @@ def train(epochs):
                     total += labels.cpu().size(0)
                     correct += (predicted == labels.cpu()).sum().item()
             # logging
+            line = f'Epoch {epoch + 1}  total loss: {running_loss:.2f}, Acc. on test set: {(100 * correct / total):.2f}%\n'
             with open(os.path.join(task_path, "train_loss.txt"), 'a+') as f:
-                f.write(
-                    f'Epoch {epoch + 1}  total loss: {running_loss:.2f}, Acc. on test set: {(100 * correct / total):.2f}%\n')
+                f.write(line)
 
             torch.save(net.state_dict(), PATH.format(epoch + 1))
     except Exception as e:
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
-    task_path = os.path.join(BASE_DIR, "result", f'task-{args.task_id}')
+    task_path = os.path.join(BASE_DIR, "tasks", f'task-{args.task_id}')
     print(f"Saving task result to: {task_path}")
 
     weights_path = os.path.join(task_path, "weights")

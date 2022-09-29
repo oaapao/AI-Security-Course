@@ -55,5 +55,5 @@ if __name__ == '__main__':
     parser.add_argument('--epoch', help='which epoch result to use', type=int, default=5)
     parser.add_argument('--device', help='cpu or gpu', type=str, default='cuda:3')
     args = parser.parse_args()
-    task_path = os.path.join(BASE_DIR, "result", f'task-{args.task_id}')
+    task_path = os.path.join(BASE_DIR, "tasks", f'task-{args.task_id}')
     run_test(os.path.join(task_path, "weights", f"{args.epoch}.pth"), args.device)
