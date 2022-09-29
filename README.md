@@ -39,7 +39,8 @@ responsive predict labels via the following shell:
 
 ```shell
 # feel free to change
-python src/test.py --path 1234-5678/20.pth --device cuda
+export PYTHONPATH=$(pwd):$(pwd)/src:$PYTHONPATH
+python src/test.py --task_id 1 --epoch 20 --device cuda:3
 ```
 
 Make sure you have sufficient right on .sh before run it:
@@ -63,7 +64,7 @@ Alter run_evaluate.sh as you wish:
 
 ```shell
 # in run_evaluate.sh
-python src/evaluate.py --gt gt.txt --pre prediction.txt
+python src/evaluate.py --task_id 1 --gt gt.txt
 ```
 
 Then run the following cmd to obtain evaluation results:

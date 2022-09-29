@@ -23,8 +23,9 @@ def evaluate(gt_path, pre_path):
         pre_str = f.read()
     y_true = [classes[int(i)] for i in gt_str.split(' ')[0:-1]]
     y_pred = [classes[int(i)] for i in pre_str.split(' ')[0:-1]]
-    print(classification_report(y_true, y_pred))
-    # print(f'Acc. {accuracy_score(y_true, y_pred)}')
+
+    with open(os.path.join(task_path, "evaluation.txt"), 'w') as fp:
+        fp.write(classification_report(y_true, y_pred))
 
     C = confusion_matrix(y_true, y_pred, labels=list(classes))
     plt.matshow(C)
@@ -36,13 +37,16 @@ def evaluate(gt_path, pre_path):
 
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.show()
+    plt.draw()
+    plt.savefig(os.path.join(task_path, "confusion_matrix.png"))
+    print("Evaluate finished")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--task_id', help='Task ID', type=int, default=1)
     parser.add_argument('--gt', help='gt label txt path', type=str, default='gt.txt')
-    parser.add_argument('--pre', help='predict label txt path', type=str, default='prediction.txt')
     args = parser.parse_args()
+    task_path = os.path.join(BASE_DIR, "result", f'task-{args.task_id}')
 
-    evaluate(os.path.join(BASE_DIR, "result", args.gt), os.path.join(BASE_DIR, "result", args.pre))
+    evaluate(os.path.join(BASE_DIR, "result", args.gt), os.path.join(task_path, 'prediction.txt'))
