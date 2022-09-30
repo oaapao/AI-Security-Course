@@ -139,7 +139,8 @@ def show_confusion_matrix(task_id):
 
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.title('Confusion Matrix')
+    plt.xticks(range(0, 10), list(classes), rotation=45)
+    plt.yticks(range(0, 10), list(classes))
     plt.draw()
     plt.show()
 

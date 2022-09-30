@@ -72,7 +72,7 @@ After that you can use src/analysis.py to obtain some useful figures.
 
 2. As the epoch of train increase, the loss on training set and Acc on test set as follows:
 
-   <img src="img/epoch.png" alt="failed to load image">
+   <img src="img/epoches.png" alt="failed to load image">
 
 3. Changing learning rate in training process, the final test result(Acc) on test set as follows:
 
